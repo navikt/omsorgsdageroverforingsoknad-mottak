@@ -37,14 +37,14 @@ import org.slf4j.LoggerFactory
 import java.net.URI
 import java.util.*
 
-private val logger: Logger = LoggerFactory.getLogger("no.nav.OmsorgspengerMottak")
+private val logger: Logger = LoggerFactory.getLogger("no.nav.OmsorgsdageroverforingMottak")
 private const val soknadIdKey = "soknad_id"
 private val soknadIdAttributeKey = AttributeKey<String>(soknadIdKey)
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @KtorExperimentalAPI
-fun Application.omsorgspengerMottak() {
+fun Application.omsorgsdageroverforingMottak() {
     val appId = environment.config.id()
     logProxyProperties()
     DefaultExports.initialize()

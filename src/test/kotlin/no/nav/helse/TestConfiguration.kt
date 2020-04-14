@@ -13,7 +13,7 @@ object TestConfiguration {
         port : Int = 8080,
         aktoerRegisterBaseUrl : String? = wireMockServer?.getAktoerRegisterBaseUrl(),
         k9DokumentBaseUrl : String? = wireMockServer?.getK9DokumentBaseUrl(),
-        omsorgspengerMottakAzureClientId: String = "omsorgspenger-mottak",
+        omsorgspengerMottakAzureClientId: String = "omsorgsdageroverforingsoknad-mottak",
         azureAuthorizedClients: Set<String> = setOf("azure-client-1", "azure-client-2","azure-client-3")
     ) : Map<String, String>{
         val map = mutableMapOf(
@@ -32,7 +32,7 @@ object TestConfiguration {
         // Clients
         if (wireMockServer != null) {
             map["nav.auth.clients.0.alias"] = "azure-v2"
-            map["nav.auth.clients.0.client_id"] = "omsorgspenger-mottak"
+            map["nav.auth.clients.0.client_id"] = "omsorgsdageroverforingsoknad-mottak"
             map["nav.auth.clients.0.client_secret"] = "secret-key"
             map["nav.auth.clients.0.discovery_endpoint"] = wireMockServer.getAzureV2WellKnownUrl()
             map["nav.auth.scopes.lagre-dokument"] = "k9-dokument/.default"

@@ -27,7 +27,6 @@ internal class SoknadOverforeDagerMottakService(
             metadata = metadata,
             soknad = outgoing
         )
-
         return soknadId
     }
 }

@@ -103,7 +103,7 @@ internal class DokumentGateway(
             factor = 2.0
         ) {
             val (request, response, result) = Operation.monitored(
-                app = "omsorgspenger-mottak",
+                app = "omsorgsdageroverforingsoknad-mottak",
                 operation = LAGRE_DOKUMENT_OPERATION,
                 resultResolver = { 201 == it.second.statusCode }
             ) {

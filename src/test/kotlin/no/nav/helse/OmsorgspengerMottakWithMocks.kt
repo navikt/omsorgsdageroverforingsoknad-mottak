@@ -15,7 +15,7 @@ class OmsorgspengerMottakWithMocks {
         @JvmStatic
         fun main(args: Array<String>) {
 
-            val token = Azure.V2_0.generateJwt(clientId = "azure-client-2", audience = "omsorgspenger-mottak")
+            val token = Azure.V2_0.generateJwt(clientId = "azure-client-2", audience = "omsorgsdageroverforingsoknad-mottak")
             logger.info("Token ---> {}", token)
 
             val wireMockServer = WireMockBuilder()

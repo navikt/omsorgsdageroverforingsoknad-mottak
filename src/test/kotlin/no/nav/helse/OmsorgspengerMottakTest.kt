@@ -59,8 +59,8 @@ class OmsorgspengerMottakTest {
         private val kafkaTestConsumer = kafkaEnvironment.testConsumer()
         private val objectMapper = jacksonObjectMapper().dusseldorfConfigured()
 
-        private val authorizedAccessToken = Azure.V1_0.generateJwt(clientId = "omsorgspenger-api", audience = "omsorgspenger-mottak")
-        private val unAauthorizedAccessToken = Azure.V2_0.generateJwt(clientId = "ikke-authorized-client", audience = "omsorgspenger-mottak")
+        private val authorizedAccessToken = Azure.V1_0.generateJwt(clientId = "omsorgspenger-api", audience = "omsorgsdageroverforingsoknad-mottak")
+        private val unAauthorizedAccessToken = Azure.V2_0.generateJwt(clientId = "ikke-authorized-client", audience = "omsorgsdageroverforingsoknad-mottak")
 
         private var engine = newEngine(kafkaEnvironment)
 
@@ -69,7 +69,7 @@ class OmsorgspengerMottakTest {
             val testConfig = ConfigFactory.parseMap(TestConfiguration.asMap(
                 wireMockServer = wireMockServer,
                 kafkaEnvironment = kafkaEnvironment,
-                omsorgspengerMottakAzureClientId = "omsorgspenger-mottak",
+                omsorgspengerMottakAzureClientId = "omsorgsdageroverforingsoknad-mottak",
                 azureAuthorizedClients = setOf("omsorgspenger-api")
             ))
             val mergedConfig = testConfig.withFallback(fileConfig)
@@ -119,8 +119,8 @@ class OmsorgspengerMottakTest {
 
     @Test
     fun `Gyldig søknad for overføring av dager blir lagt til prosessering`(){
-        gyldigSoknadOverforeDagerBlirLagtTilProsessering(Azure.V1_0.generateJwt(clientId = "omsorgspenger-api", audience = "omsorgspenger-mottak"))
-        gyldigSoknadOverforeDagerBlirLagtTilProsessering(Azure.V2_0.generateJwt(clientId = "omsorgspenger-api", audience = "omsorgspenger-mottak"))
+        gyldigSoknadOverforeDagerBlirLagtTilProsessering(Azure.V1_0.generateJwt(clientId = "omsorgspenger-api", audience = "omsorgsdageroverforingsoknad-mottak"))
+        gyldigSoknadOverforeDagerBlirLagtTilProsessering(Azure.V2_0.generateJwt(clientId = "omsorgspenger-api", audience = "omsorgsdageroverforingsoknad-mottak"))
 
     }
 
