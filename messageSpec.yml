@@ -5,7 +5,7 @@ info:
     MERK!! Denne swagger-ui definisjonen er brukt for å definere topics og meldinger for kafka, og er ikke ment å brukes som et API spesifikasjon.
 
   version: "1.0.0"
-  title: "Omsorgspengesoknad Mottak"
+  title: "Omsorgsdageroverforingsoknad Mottak"
   contact:
     name: "Arbeids- og velferdsdirektoratet"
     url: "https://www.nav.no"
