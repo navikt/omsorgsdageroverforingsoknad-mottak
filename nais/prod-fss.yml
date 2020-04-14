@@ -1,7 +1,7 @@
 apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
-  name: omsorgspenger-mottak
+  name: omsorgsdageroverforingsoknad-mottak
   namespace: default
   labels:
     team: dusseldorf
