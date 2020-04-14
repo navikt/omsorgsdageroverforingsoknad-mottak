@@ -48,7 +48,7 @@ spec:
     - name: K9_DOKUMENT_BASE_URL
       value: https://k9-dokument.nais.preprod.local
     - name: AZURE_AUTHORIZED_CLIENTS
-      value: 14f509d4-5f43-4e42-b551-d61db10972f2
+      value: 5568bc68-6eb9-4de1-b1b6-99dd9d25a39c
     - name: AZURE_V1_DISCOVERY_ENDPOINT
       value: https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/.well-known/openid-configuration
     - name: AZURE_V2_DISCOVERY_ENDPOINT

@@ -48,9 +48,9 @@ spec:
     - name: K9_DOKUMENT_BASE_URL
       value: https://k9-dokument.nais.adeo.no
     - name: AZURE_CLIENT_ID
-      value: 4dc7783f-ee44-4707-ae5c-1d824d19f59c
+      value: 2d33dfd8-a279-470b-b334-e64491da4cb4
     - name: AZURE_AUTHORIZED_CLIENTS
-      value: d07ff38d-0ca8-4e52-b211-ee0f651fb12c
+      value: d07ff38d-0ca8-4e52-b211-ee0f651fb12c #TODO/ Endre når api blir satt i prod gjennom api-managment
     - name: AZURE_V1_DISCOVERY_ENDPOINT
       value: https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/.well-known/openid-configuration
     - name: AZURE_V2_DISCOVERY_ENDPOINT
