@@ -6,7 +6,7 @@ val ktorVersion = ext.get("ktorVersion").toString()
 val kafkaEmbeddedEnvVersion = "2.2.0"
 val kafkaVersion = "2.3.0" // Alligned med version fra kafka-embedded-env
 
-val mainClass = "no.nav.helse.OmsorgsdageroverforingsoknadMottak"
+val mainClass = "no.nav.helse.OmsorgsdageroverforingsoknadMottakKt"
 
 
 plugins {
