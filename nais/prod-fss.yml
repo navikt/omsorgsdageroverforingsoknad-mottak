@@ -38,9 +38,9 @@ spec:
     enabled: true
     paths:  # Optional. If specified, will override default values with custom Vault configuration.
       - mountPath: /var/run/secrets/nais.io/vault  # Filesystem path inside the pod where secrets will appear.
-        kvPath: /kv/prod/fss/omsorgspenger-mottak/default  # Vault KV path to fetch secrets from.
+        kvPath: /kv/prod/fss/omsorgsdageroverforingsoknad-mottak/default  # Vault KV path to fetch secrets from.
       - mountPath: /var/run/secrets/nais.io/azuread
-        kvPath: /azuread/data/prod/creds/omsorgspenger-mottak
+        kvPath: /azuread/data/prod/creds/omsorgsdageroverforingsoknad-mottak
       - mountPath: /var/run/secrets/nais.io/serviceuser
         kvPath: /serviceuser/data/prod/srvomsorgspeng-mtk
   webproxy: true
