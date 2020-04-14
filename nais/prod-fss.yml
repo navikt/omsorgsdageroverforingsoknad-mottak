@@ -1,0 +1,61 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: omsorgspenger-mottak
+  namespace: default
+  labels:
+    team: dusseldorf
+spec:
+  image: {{ image }}
+  port: 8080
+  liveness:
+    path: isalive
+    initialDelay: 20
+    timeout: 1
+    periodSeconds: 5
+    failureThreshold: 10
+  readiness:
+    path: isready
+    initialDelay: 20
+    timeout: 1
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+  ingresses:
+    - https://omsorgsdageroverforingsoknad-mottak.nais.adeo.no
+  replicas:
+    min: 1
+    max: 2
+    cpuThresholdPercentage: 90
+  prometheus:
+    enabled: true
+    path: /metrics
+  vault:
+    enabled: true
+    paths:  # Optional. If specified, will override default values with custom Vault configuration.
+      - mountPath: /var/run/secrets/nais.io/vault  # Filesystem path inside the pod where secrets will appear.
+        kvPath: /kv/prod/fss/omsorgspenger-mottak/default  # Vault KV path to fetch secrets from.
+      - mountPath: /var/run/secrets/nais.io/azuread
+        kvPath: /azuread/data/prod/creds/omsorgspenger-mottak
+      - mountPath: /var/run/secrets/nais.io/serviceuser
+        kvPath: /serviceuser/data/prod/srvomsorgspeng-mtk
+  webproxy: true
+  env:
+    - name: K9_DOKUMENT_BASE_URL
+      value: https://k9-dokument.nais.adeo.no
+    - name: AZURE_CLIENT_ID
+      value: 4dc7783f-ee44-4707-ae5c-1d824d19f59c
+    - name: AZURE_AUTHORIZED_CLIENTS
+      value: d07ff38d-0ca8-4e52-b211-ee0f651fb12c
+    - name: AZURE_V1_DISCOVERY_ENDPOINT
+      value: https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/.well-known/openid-configuration
+    - name: AZURE_V2_DISCOVERY_ENDPOINT
+      value: https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0/.well-known/openid-configuration
+    - name: LAGRE_DOKUMENT_SCOPES
+      value: 0c5a6709-ba2a-42b7-bbfc-9b9f844e2ee2/.default
+    - name: KAFKA_BOOTSTRAP_SERVERS
+      value: a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443

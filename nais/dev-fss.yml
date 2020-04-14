@@ -1,0 +1,59 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: omsorgspenger-mottak
+  namespace: default
+  labels:
+    team: dusseldorf
+spec:
+  image: {{ image }}
+  port: 8080
+  liveness:
+    path: isalive
+    initialDelay: 20
+    timeout: 1
+    periodSeconds: 5
+    failureThreshold: 10
+  readiness:
+    path: isready
+    initialDelay: 20
+    timeout: 1
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+  ingresses:
+    - https://omsorgsdageroverforingsoknad-mottak.nais.preprod.local
+  replicas:
+    min: 1
+    max: 2
+    cpuThresholdPercentage: 90
+  prometheus:
+    enabled: true
+    path: /metrics
+  vault:
+    enabled: true
+    paths:  # Optional. If specified, will override default values with custom Vault configuration.
+      - mountPath: /var/run/secrets/nais.io/vault  # Filesystem path inside the pod where secrets will appear.
+        kvPath: /kv/preprod/fss/omsorgspenger-mottak/default  # Vault KV path to fetch secrets from.
+      - mountPath: /var/run/secrets/nais.io/azuread
+        kvPath: /azuread/data/dev/creds/omsorgspenger-mottak
+      - mountPath: /var/run/secrets/nais.io/serviceuser
+        kvPath: /serviceuser/data/dev/srvomsorgspeng-mtk
+  webproxy: true
+  env:
+    - name: K9_DOKUMENT_BASE_URL
+      value: https://k9-dokument.nais.preprod.local
+    - name: AZURE_AUTHORIZED_CLIENTS
+      value: 14f509d4-5f43-4e42-b551-d61db10972f2
+    - name: AZURE_V1_DISCOVERY_ENDPOINT
+      value: https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/.well-known/openid-configuration
+    - name: AZURE_V2_DISCOVERY_ENDPOINT
+      value: https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/v2.0/.well-known/openid-configuration
+    - name: LAGRE_DOKUMENT_SCOPES
+      value: 97f0b1bc-6aa9-4d44-a3c7-60b4318fbec4/.default
+    - name: KAFKA_BOOTSTRAP_SERVERS
+      value: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
