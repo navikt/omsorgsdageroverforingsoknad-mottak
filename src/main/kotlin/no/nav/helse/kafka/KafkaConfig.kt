@@ -10,7 +10,7 @@ import java.io.File
 import java.util.*
 
 private val logger: Logger = LoggerFactory.getLogger(KafkaConfig::class.java)
-private const val ID_PREFIX = "srvomsorgspeng-mtk-"
+private const val ID_PREFIX = "srvomsover-mtk-"
 
 internal class KafkaConfig(
     bootstrapServers: String,

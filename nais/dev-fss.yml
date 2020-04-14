@@ -42,7 +42,7 @@ spec:
       - mountPath: /var/run/secrets/nais.io/azuread
         kvPath: /azuread/data/dev/creds/omsorgsdageroverforingsoknad-mottak
       - mountPath: /var/run/secrets/nais.io/serviceuser
-        kvPath: /serviceuser/data/dev/srvomsorgspeng-mtk
+        kvPath: /serviceuser/data/dev/srvomsover-mtk
   webproxy: true
   env:
     - name: K9_DOKUMENT_BASE_URL
