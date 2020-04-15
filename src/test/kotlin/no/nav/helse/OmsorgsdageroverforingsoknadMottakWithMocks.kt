@@ -7,9 +7,9 @@ import no.nav.helse.dusseldorf.testsupport.wiremock.WireMockBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class OmsorgspengerMottakWithMocks {
+class OmsorgsdageroverforingsoknadMottakWithMocks {
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(OmsorgspengerMottakWithMocks::class.java)
+        private val logger: Logger = LoggerFactory.getLogger(OmsorgsdageroverforingsoknadMottakWithMocks::class.java)
 
 
         @JvmStatic

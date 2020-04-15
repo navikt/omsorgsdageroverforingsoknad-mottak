@@ -32,11 +32,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 @KtorExperimentalAPI
-class OmsorgspengerMottakTest {
+class OmsorgsdageroverforingsoknadMottakTest {
 
     @KtorExperimentalAPI
     private companion object {
-        private val logger: Logger = LoggerFactory.getLogger(OmsorgspengerMottakTest::class.java)
+        private val logger: Logger = LoggerFactory.getLogger(OmsorgsdageroverforingsoknadMottakTest::class.java)
 
         // Se https://github.com/navikt/dusseldorf-ktor#f%C3%B8dselsnummer
         private val gyldigFodselsnummerA = "02119970078"
@@ -59,7 +59,7 @@ class OmsorgspengerMottakTest {
         private val kafkaTestConsumer = kafkaEnvironment.testConsumer()
         private val objectMapper = jacksonObjectMapper().dusseldorfConfigured()
 
-        private val authorizedAccessToken = Azure.V1_0.generateJwt(clientId = "omsorgspenger-api", audience = "omsorgsdageroverforingsoknad-mottak")
+        private val authorizedAccessToken = Azure.V1_0.generateJwt(clientId = "omsorgsdageroverforingsoknad-api", audience = "omsorgsdageroverforingsoknad-mottak")
         private val unAauthorizedAccessToken = Azure.V2_0.generateJwt(clientId = "ikke-authorized-client", audience = "omsorgsdageroverforingsoknad-mottak")
 
         private var engine = newEngine(kafkaEnvironment)
@@ -70,7 +70,7 @@ class OmsorgspengerMottakTest {
                 wireMockServer = wireMockServer,
                 kafkaEnvironment = kafkaEnvironment,
                 omsorgspengerMottakAzureClientId = "omsorgsdageroverforingsoknad-mottak",
-                azureAuthorizedClients = setOf("omsorgspenger-api")
+                azureAuthorizedClients = setOf("omsorgsdageroverforingsoknad-api")
             ))
             val mergedConfig = testConfig.withFallback(fileConfig)
             return HoconApplicationConfig(mergedConfig)
@@ -119,8 +119,8 @@ class OmsorgspengerMottakTest {
 
     @Test
     fun `Gyldig søknad for overføring av dager blir lagt til prosessering`(){
-        gyldigSoknadOverforeDagerBlirLagtTilProsessering(Azure.V1_0.generateJwt(clientId = "omsorgspenger-api", audience = "omsorgsdageroverforingsoknad-mottak"))
-        gyldigSoknadOverforeDagerBlirLagtTilProsessering(Azure.V2_0.generateJwt(clientId = "omsorgspenger-api", audience = "omsorgsdageroverforingsoknad-mottak"))
+        gyldigSoknadOverforeDagerBlirLagtTilProsessering(Azure.V1_0.generateJwt(clientId = "omsorgsdageroverforingsoknad-api", audience = "omsorgsdageroverforingsoknad-mottak"))
+        gyldigSoknadOverforeDagerBlirLagtTilProsessering(Azure.V2_0.generateJwt(clientId = "omsorgsdageroverforingsoknad-api", audience = "omsorgsdageroverforingsoknad-mottak"))
 
     }
 
