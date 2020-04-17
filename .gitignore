@@ -1,4 +1,4 @@
-/.gradle
+.gradle/*
 /.idea
 /out
 /build
@@ -6,3 +6,4 @@
 *.ipr
 *.iws
 .DS_Store
+/.gradle/
