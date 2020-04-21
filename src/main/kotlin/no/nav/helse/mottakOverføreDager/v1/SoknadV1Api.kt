@@ -45,7 +45,7 @@ private suspend fun ApplicationCall.soknadOverforeDager() : SoknadOverforeDagerI
 }
 
 private fun ApplicationCall.metadata() = Metadata(
-    version = 1,
+    version = 2,
     correlationId = request.getCorrelationId(),
     requestId = response.getRequestId()
 )
