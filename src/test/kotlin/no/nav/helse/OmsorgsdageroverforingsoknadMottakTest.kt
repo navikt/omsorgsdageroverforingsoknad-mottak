@@ -223,7 +223,8 @@ class OmsorgsdageroverforingsoknadMottakTest {
         val soknad = """
         {
             "søker": {
-                "aktørId": "ABC"
+                "aktørId": "ABC",
+                "fødselsnummer": "$gyldigFodselsnummerA"
             }
         }
         """.trimIndent()

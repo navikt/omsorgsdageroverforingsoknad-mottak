@@ -15,15 +15,25 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.Serializer
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
+import no.nav.brukernotifikasjon.schemas.Beskjed
+import no.nav.brukernotifikasjon.schemas.Nokkel
+import no.nav.helse.SoknadId
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import java.util.*
 
 internal class SoknadOverforeDagerKafkaProducer(
-    kafkaConfig: KafkaConfig
+    val kafkaConfig: KafkaConfig
 ) : HealthCheck {
     private companion object {
         private val NAME = "SoknadOverforeDagerProducer"
         private val TOPIC_USE = TopicUse(
             name = Topics.MOTTATT_OVERFORE_DAGER,
             valueSerializer = SoknadV1OutgoingSerialier()
+        )
+        private val TOPIC_USE_DITT_NAV_MELDING = TopicUse(
+            name = Topics.DITT_NAV_BESKJED,
+            valueSerializer = DittNavBeskjedSerializer()
         )
         private val logger = LoggerFactory.getLogger(SoknadOverforeDagerKafkaProducer::class.java)
     }
@@ -33,6 +43,19 @@ internal class SoknadOverforeDagerKafkaProducer(
         TOPIC_USE.keySerializer(),
         TOPIC_USE.valueSerializer
     )
+
+    private val producerAvDittNavMelding = KafkaProducer<Nokkel, Beskjed>(
+        kafkaConfig
+            .producerDittNavMelding(NAME)
+    )
+
+    fun createKeyForEvent(eventId: String): Nokkel {
+        val systemuser = kafkaConfig.credentials.first
+        return Nokkel.newBuilder()
+            .setEventId(eventId)
+            .setSystembruker(systemuser)
+            .build()
+    }
 
     internal fun produce(
         soknad: SoknadOverforeDagerOutgoing,
@@ -52,6 +75,28 @@ internal class SoknadOverforeDagerKafkaProducer(
         ).get()
 
         logger.info("Søknad om overføring av omsorgsdager sendt til Topic '${TOPIC_USE.name}' med offset '${recordMetaData.offset()}' til partition '${recordMetaData.partition()}'")
+    }
+
+    internal fun produceDittnavMelding(
+        dto: ProduceBeskjedDto,
+        søkersNorskeIdent: String,
+        soknadId: SoknadId
+    ) {
+        val eventId = UUID.randomUUID().toString()
+        val nokkel: Nokkel = createKeyForEvent(
+            eventId = eventId
+        )
+        val beskjed: Beskjed = createBeskjedForIdent(
+            ident = søkersNorskeIdent,
+            dto = dto,
+            grupperingsId = soknadId.id
+        )
+
+        val producerRecord: ProducerRecord<Nokkel, Beskjed> = ProducerRecord(TOPIC_USE_DITT_NAV_MELDING.name, nokkel, beskjed)
+
+        val recordMetaData = producerAvDittNavMelding.send(producerRecord).get()
+
+        logger.info("SoknadV1KafkaProducer produceDittnavMelding. Returnvalue, if any: ${recordMetaData}")
     }
 
 
@@ -83,4 +128,33 @@ private class SoknadV1OutgoingSerialier : Serializer<TopicEntry<JSONObject>> {
     }
     override fun configure(configs: MutableMap<String, *>?, isKey: Boolean) {}
     override fun close() {}
+}
+
+private class DittNavBeskjedSerializer : Serializer<TopicEntry<ProduceBeskjedDto>> {
+    override fun serialize(topic: String, data: TopicEntry<ProduceBeskjedDto>): ByteArray {
+        return ProduceBeskjedDto(data.data.tekst, data.data.link).toString().toByteArray()
+    }
+
+    override fun configure(configs: MutableMap<String, *>?, isKey: Boolean) {}
+    override fun close() {}
+}
+
+private fun createBeskjedForIdent(ident: String, dto: ProduceBeskjedDto, grupperingsId: String): Beskjed {
+    val nowInMs = Instant.now().toEpochMilli()
+    val weekFromNowInMs = Instant.now().plus(7, ChronoUnit.DAYS).toEpochMilli()
+    val build = Beskjed.newBuilder()
+        .setFodselsnummer(ident)
+        .setGrupperingsId(grupperingsId)
+        .setLink(dto.link)
+        .setTekst(dto.tekst)
+        .setTidspunkt(nowInMs)
+        .setSynligFremTil(weekFromNowInMs)
+    return build.build()
+}
+
+
+class ProduceBeskjedDto(val tekst: String, val link: String) {
+    override fun toString(): String {
+        return "ProduceBeskjedDto{tekst='$tekst', link='$link'}"
+    }
 }
