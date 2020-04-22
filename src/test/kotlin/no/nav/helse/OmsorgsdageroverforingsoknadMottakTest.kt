@@ -69,7 +69,7 @@ class OmsorgsdageroverforingsoknadMottakTest {
             val testConfig = ConfigFactory.parseMap(TestConfiguration.asMap(
                 wireMockServer = wireMockServer,
                 kafkaEnvironment = kafkaEnvironment,
-                omsorgspengerMottakAzureClientId = "omsorgsdageroverforingsoknad-mottak",
+                omsorgsdageroverforingsoknadMottakAzureClientId = "omsorgsdageroverforingsoknad-mottak",
                 azureAuthorizedClients = setOf("omsorgsdageroverforingsoknad-api")
             ))
             val mergedConfig = testConfig.withFallback(fileConfig)
