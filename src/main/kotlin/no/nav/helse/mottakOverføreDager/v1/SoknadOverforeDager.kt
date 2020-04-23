@@ -21,6 +21,10 @@ internal class SoknadOverforeDagerIncoming(json: String) {
         JsonKeys.aktørId
     ))
 
+    internal val sokerFodselsNummer = jsonObject.getJSONObject(JsonKeys.søker).getString(
+        JsonKeys.fødselsnummer
+    )
+
     internal fun medSoknadId(soknadId: SoknadId): SoknadOverforeDagerIncoming {
         jsonObject.put(JsonKeys.søknadId, soknadId.id)
         return this

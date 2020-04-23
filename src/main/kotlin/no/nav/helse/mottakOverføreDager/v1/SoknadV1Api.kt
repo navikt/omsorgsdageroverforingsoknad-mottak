@@ -19,7 +19,8 @@ import org.slf4j.LoggerFactory
 private val logger: Logger = LoggerFactory.getLogger("no.nav.SoknadV1Api")
 
 internal fun Route.SoknadV1Api(
-    soknadOverforeDagerMottakService: SoknadOverforeDagerMottakService
+    soknadOverforeDagerMottakService: SoknadOverforeDagerMottakService,
+    dittNavV1Service: DittNavV1Service
 ) {
 
     post("v1/soknad/overfore-dager") {
@@ -32,6 +33,15 @@ internal fun Route.SoknadV1Api(
             metadata = metadata,
             soknad = soknad
         )
+
+        sendBeskjedTilDittNav(
+            dittNavV1Service = dittNavV1Service,
+            dittNavTekst = "Melding om overføring av omsorgsdager er mottatt.",
+            dittNavLink = "",
+            sokerFodselsNummer = soknad.sokerFodselsNummer,
+            soknadId = soknadId
+        )
+
         call.respond(HttpStatusCode.Accepted, mapOf("id" to soknadId.id))
     }
 

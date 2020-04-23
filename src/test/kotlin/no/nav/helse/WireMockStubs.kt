@@ -59,6 +59,20 @@ private fun WireMockServer.stubHealthEndpoint(
     return this
 }
 
+internal fun WireMockServer.stubKafkaSchemaRegistry(
+    path : String
+) : WireMockServer {
+    WireMock.stubFor(
+        WireMock.get(WireMock.urlPathMatching(".*$path")).willReturn(
+            WireMock.aResponse()
+                .withStatus(200)
+                .withBody("[1]")
+        )
+    )
+
+    return this
+}
+
 internal fun WireMockServer.stubK9DokumentHealth() = stubHealthEndpoint("$k9DokumentBasePath/health")
 
 internal fun WireMockServer.getAktoerRegisterBaseUrl() = baseUrl() + aktoerRegisterBasePath
