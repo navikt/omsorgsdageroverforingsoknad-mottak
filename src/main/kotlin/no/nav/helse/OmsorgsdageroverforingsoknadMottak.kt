@@ -112,16 +112,7 @@ fun Application.omsorgsdageroverforingMottak() {
             healthService = HealthService(
                 healthChecks = setOf(
                     soknadOverforeDagerKafkaProducer,
-                    dokumentGateway,
-                    HttpRequestHealthCheck(
-                        issuers.healthCheckMap(
-                            mutableMapOf(
-                                Url.healthURL(configuration.getK9DokumentBaseUrl()) to HttpRequestHealthConfig(
-                                    expectedStatus = HttpStatusCode.OK
-                                )
-                            )
-                        )
-                    )
+                    dokumentGateway
                 )
             )
         )
@@ -141,18 +132,6 @@ fun Application.omsorgsdageroverforingMottak() {
         }
     }
 }
-
-private fun Map<Issuer, Set<ClaimRule>>.healthCheckMap(
-    initial: MutableMap<URI, HttpRequestHealthConfig> = mutableMapOf()
-): Map<URI, HttpRequestHealthConfig> {
-    forEach { issuer, _ ->
-        initial[issuer.jwksUri()] =
-            HttpRequestHealthConfig(expectedStatus = HttpStatusCode.OK, includeExpectedStatusEntity = false)
-    }
-    return initial.toMap()
-}
-
-private fun Url.Companion.healthURL(baseUrl: URI) = Url.buildURL(baseUrl = baseUrl, pathParts = listOf("health"))
 
 private fun ApplicationCall.setSoknadItAsAttributeAndGet(): String {
     val soknadId = UUID.randomUUID().toString()
