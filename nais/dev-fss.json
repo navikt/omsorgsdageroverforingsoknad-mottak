@@ -1,0 +1,24 @@
+{
+  "app": "omsorgsdageroverforingsoknad-mottak",
+  "cluster": "dev-fss",
+  "namespace": "default",
+  "team": "dusseldorf",
+  "minReplicas": "1",
+  "maxReplicas": "2",
+  "ingresses": [
+    "https://omsorgsdageroverforingsoknad-mottak.nais.preprod.local"
+  ],
+  "vaultKvPath": "/kv/preprod/fss/omsorgsdageroverforingsoknad-mottak/default",
+  "azureadKvPath": "/azuread/data/dev/creds/omsorgsdageroverforingsoknad-mottak",
+  "serviceuserKvPath": "/serviceuser/data/dev/srvomsover-mtk",
+  "env": {
+    "K9_DOKUMENT_BASE_URL": "https://k9-dokument.nais.preprod.local",
+    "AZURE_AUTHORIZED_CLIENTS": "5568bc68-6eb9-4de1-b1b6-99dd9d25a39c",
+    "AZURE_V1_DISCOVERY_ENDPOINT": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/.well-known/openid-configuration",
+    "AZURE_V2_DISCOVERY_ENDPOINT": "https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/v2.0/.well-known/openid-configuration",
+    "LAGRE_DOKUMENT_SCOPES": "97f0b1bc-6aa9-4d44-a3c7-60b4318fbec4/.default",
+    "KAFKA_BOOTSTRAP_SERVERS": "b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443"
+  },
+  "slack-channel": "sif-alerts-dev",
+  "app-alert-ingress": "https://omsorgsdageroverforingsoknad-mottak.nais.preprod.local"
+}
