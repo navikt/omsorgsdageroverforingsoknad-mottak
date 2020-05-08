@@ -1,0 +1,24 @@
+{
+  "app": "omsorgsdageroverforingsoknad-mottak",
+  "cluster": "prod-fss",
+  "namespace": "default",
+  "team": "dusseldorf",
+  "minReplicas": "1",
+  "maxReplicas": "2",
+  "ingresses": [
+    "https://omsorgsdageroverforingsoknad-mottak.nais.adeo.no"
+  ],
+  "vaultKvPath": "/kv/prod/fss/omsorgsdageroverforingsoknad-mottak/default",
+  "azureadKvPath": "/azuread/data/prod/creds/omsorgsdageroverforingsoknad-mottak",
+  "serviceuserKvPath": "/serviceuser/data/prod/srvomsover-mtk",
+  "env": {
+    "K9_DOKUMENT_BASE_URL": "https://k9-dokument.nais.adeo.no",
+    "AZURE_AUTHORIZED_CLIENTS": "e2c4ecb5-249d-4eb2-aa30-d5a5a81ba0a7",
+    "AZURE_V1_DISCOVERY_ENDPOINT": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/.well-known/openid-configuration",
+    "AZURE_V2_DISCOVERY_ENDPOINT": "https://login.microsoftonline.com/62366534-1ec3-4962-8869-9b5535279d0b/v2.0/.well-known/openid-configuration",
+    "LAGRE_DOKUMENT_SCOPES": "0c5a6709-ba2a-42b7-bbfc-9b9f844e2ee2/.default",
+    "KAFKA_BOOTSTRAP_SERVERS": "a01apvl00145.adeo.no:8443,a01apvl00146.adeo.no:8443,a01apvl00147.adeo.no:8443,a01apvl00148.adeo.no:8443,a01apvl00149.adeo.no:8443,a01apvl00150.adeo.no:8443"
+  },
+  "slack-channel": "sif-alerts",
+  "app-alert-ingress": "https://omsorgsdageroverforingsoknad-mottak.nais.adeo.no"
+}

@@ -1,6 +1,8 @@
 # Omsorgsdageroverføringsøknad-mottak
 ![CI / CD](https://github.com/navikt/omsorgsdageroverforingsoknad-mottak/workflows/CI%20/%20CD/badge.svg)
 
+![NAIS Alerts](https://github.com/navikt/omsorgsdageroverforingsoknad-mottak/workflows/Alerts/badge.svg)
+
 Tjeneste som tar imot søknader om overføring av omsorgsdager fra api og legger de til til prosessering.
 Mottar søknad som REST API-kall. Legges videre på en Kafka Topic som tjenesten [omsorgsdageroverforingsoknad-prosessering](https://github.com/navikt/omsorgsdageroverforingsoknad-prosessering) prosesserer.
 
@@ -24,6 +26,9 @@ attributten "data" er tilsvarende søknaden som kommer inn i REST-API'et med noe
 #### Correlation ID vs Request ID
 Correlation ID blir propagert videre, og har ikke nødvendigvis sitt opphav hos konsumenten.
 Request ID blir ikke propagert videre, og skal ha sitt opphav hos konsumenten om den settes.
+
+## Alarmer
+Vi bruker [nais-alerts](https://doc.nais.io/observability/alerts) for å sette opp alarmer. Disse finner man konfigurert i [nais/alerts.yml](nais/alerterator.yml).
 
 #### REST API
 - Correlation ID må sendes som header 'X-Correlation-ID'
