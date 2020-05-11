@@ -24,15 +24,17 @@ spec:
 
     - alert: Høy andel HTTP serverfeil (5xx responser) i {{app}}
       severity: danger
-      expr: (100 * (sum by (backend) (rate(traefik_backend_requests_total{code=~"^5\\d\\d", backend=~"{{app-alert-ingress}}/*"}[3m])) / sum by (backend) (rate(traefik_backend_requests_total{backend=~"{{app-alert-ingress}}/*"}[3m])))) > 1
-      for: 3m
-      action: "Sjekk loggene for å se hvorfor \{{ $labels.backend }} returnerer HTTP feilresponser"
+      expr: floor(increase(ktor_http_server_requests_seconds_count{result="failure", status=~"5.*", app="{{app}}"}[5m])) > 1
+      for: 1m
+      description: "Følgende request feilet: `Status \{{ $labels.status }} - \{{ $labels.method }} \{{ $labels.route }}`. Sjekk loggene for å se hvorfor dette feiler."
+      action: "`kubectl logs \{{ $labels.kubernetes_pod_name }} -n \{{ $labels.kubernetes_namespace }}`"
 
     - alert: Høy andel HTTP klientfeil (4xx responser) i {{app}}
       severity: warning
-      expr: (100 * (sum by (backend) (rate(traefik_backend_requests_total{code=~"^4\\d\\d", backend=~"{{app-alert-ingress}}/*"}[3m])) / sum by (backend) (rate(traefik_backend_requests_total{backend=~"{{app-alert-ingress}}/*"}[3m])))) > 10
-      for: 3m
-      action: "Sjekk loggene for å se hvorfor \{{ $labels.backend }} returnerer HTTP feilresponser"
+      expr: floor(increase(ktor_http_server_requests_seconds_count{result="failure", status=~"4.*", status!~"404|401", app="{{app}}"}[5m])) > 3
+      for: 1m
+      description: "Følgende request feilet: `Status \{{ $labels.status }} - \{{ $labels.method }} \{{ $labels.route }}`. Sjekk loggene for å se hvorfor dette feiler."
+      action: "`kubectl logs \{{ $labels.kubernetes_pod_name }} -n \{{ $labels.kubernetes_namespace }}`"
 
     - alert: {{app}} feiler
       expr: health_check_status{app="{{app}}"} > 0
