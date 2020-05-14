@@ -1,6 +1,5 @@
 package no.nav.helse.mottakOverføreDager.v1
 
-import kotlinx.io.core.toByteArray
 import no.nav.helse.Metadata
 import no.nav.helse.dusseldorf.ktor.health.HealthCheck
 import no.nav.helse.dusseldorf.ktor.health.Healthy
