@@ -23,6 +23,7 @@ import no.nav.helse.dusseldorf.ktor.health.UnHealthy
 import no.nav.helse.dusseldorf.ktor.metrics.Operation
 import no.nav.helse.dusseldorf.oauth2.client.AccessTokenClient
 import no.nav.helse.dusseldorf.oauth2.client.CachedAccessTokenClient
+import no.nav.helse.k9DokumentKonfigurert
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
@@ -45,7 +46,7 @@ internal class DokumentGateway(
         pathParts = listOf("v1", "dokument")
     )
 
-    private val objectMapper = configuredObjectMapper()
+    private val objectMapper = jacksonObjectMapper().k9DokumentKonfigurert()
     private val cachedAccessTokenClient = CachedAccessTokenClient(accessTokenClient)
 
     override suspend fun check(): Result {
@@ -126,12 +127,5 @@ internal class DokumentGateway(
                 }
             )
         }
-    }
-
-    private fun configuredObjectMapper() : ObjectMapper {
-        val objectMapper = jacksonObjectMapper()
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
-        return objectMapper
     }
 }

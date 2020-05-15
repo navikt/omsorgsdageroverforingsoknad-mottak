@@ -8,6 +8,7 @@ import io.ktor.config.HoconApplicationConfig
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.engine.stop
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.createTestEnvironment
 import io.ktor.server.testing.handleRequest
