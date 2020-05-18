@@ -35,7 +35,7 @@ spec:
 
     - alert: Høy andel HTTP klientfeil (4xx responser)
       severity: danger
-      expr: floor(increase(ktor_http_server_requests_seconds_count{result="failure", status=~"4.*", status!~"404|401", app="{{app}}"}[3m])) > 0
+      expr: floor(increase(ktor_http_server_requests_seconds_count{result="failure", status=~"4.*", app="{{app}}"}[3m])) > 0
       for: 1m
       description: "Følgende request feilet: `Status \{{ $labels.status }} - \{{ $labels.method }} \{{ $labels.route }}`.\n
                     Grunn:\n ```\{{ $labels.problem_details }}```\n
