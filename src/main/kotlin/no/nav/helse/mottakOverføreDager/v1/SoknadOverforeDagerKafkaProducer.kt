@@ -194,7 +194,6 @@ private fun createBeskjedForIdent(ident: String, dto: ProduceBeskjedDto, grupper
     return build.build()
 }
 
-
 class ProduceBeskjedDto(val tekst: String, val link: String) {
     override fun toString(): String {
         return "ProduceBeskjedDto{tekst='$tekst', link='$link'}"
