@@ -3,6 +3,7 @@
 
 ![NAIS Alerts](https://github.com/navikt/omsorgsdageroverforingsoknad-mottak/workflows/Alerts/badge.svg)
 
+## Overføre-dager
 Tjeneste som tar imot søknader om overføring av omsorgsdager fra api og legger de til til prosessering.
 Mottar søknad som REST API-kall. Legges videre på en Kafka Topic som tjenesten [omsorgsdageroverforingsoknad-prosessering](https://github.com/navikt/omsorgsdageroverforingsoknad-prosessering) prosesserer.
 
@@ -21,6 +22,20 @@ Mottar søknad som REST API-kall. Legges videre på en Kafka Topic som tjenesten
 attributten "data" er tilsvarende søknaden som kommer inn i REST-API'et med noen unntak:
 - "soknad_id" lagt til
 - Alle andre felter som har vært en del av JSON-meldingen som kom inn i REST-API'et vil også være en del av "data"-attributten i Kafka-meldingen.
+
+## Dele-dager
+Tjeneste som tar imot meldinger om deling av omsorgsdager fra api og legger de til til prosessering.
+Mottar søknad som REST API-kall. Legges videre på en Kafka Topic som tjenesten [omsorgsdageroverforingsoknad-prosessering](https://github.com/navikt/omsorgsdageroverforingsoknad-prosessering) prosesserer.
+
+## Versjon 1
+### Path
+/v1/melding/dele-dager
+
+### Format på melding lagt på kafka
+attributten "data" er tilsvarende melding som kommer inn i REST-API'et med noen unntak:
+- "soknad_id" lagt til
+- Alle andre felter som har vært en del av JSON-meldingen som kom inn i REST-API'et vil også være en del av "data"-attributten i Kafka-meldingen.
+
 
 ### Metadata
 #### Correlation ID vs Request ID
