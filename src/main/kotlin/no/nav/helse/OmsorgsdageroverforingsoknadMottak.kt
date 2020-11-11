@@ -31,6 +31,7 @@ import no.nav.helse.dusseldorf.ktor.jackson.JacksonStatusPages
 import no.nav.helse.dusseldorf.ktor.jackson.dusseldorfConfigured
 import no.nav.helse.dusseldorf.ktor.metrics.MetricsRoute
 import no.nav.helse.dusseldorf.ktor.metrics.init
+import no.nav.helse.mottakDeleOmsorgsdager.v1.MeldingDeleOmsorgsdagerMottakService
 import no.nav.helse.mottakOverføreDager.v1.DittNavV1Service
 import no.nav.helse.mottakOverføreDager.v1.SoknadOverforeDagerKafkaProducer
 import no.nav.helse.mottakOverføreDager.v1.SoknadOverforeDagerMottakService
@@ -125,6 +126,9 @@ fun Application.omsorgsdageroverforingMottak() {
                 SoknadV1Api(
                     soknadOverforeDagerMottakService = SoknadOverforeDagerMottakService(
                         soknadOverforeDagerKafkaProducer = soknadOverforeDagerKafkaProducer
+                    ),
+                    meldingDeleOmsorgsdagerMottakService = MeldingDeleOmsorgsdagerMottakService(
+                        kafkaProducer = soknadOverforeDagerKafkaProducer
                     ),
                     dittNavV1Service = DittNavV1Service(
                         soknadOverforeDagerKafkaProducer = soknadOverforeDagerKafkaProducer

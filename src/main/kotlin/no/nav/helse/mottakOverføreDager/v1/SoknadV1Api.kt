@@ -13,6 +13,9 @@ import io.ktor.routing.Route
 import io.ktor.routing.post
 import no.nav.helse.Metadata
 import no.nav.helse.getSoknadId
+import no.nav.helse.mottakDeleOmsorgsdager.v1.MeldingDeleOmsorgsdagerIncoming
+import no.nav.helse.mottakDeleOmsorgsdager.v1.MeldingDeleOmsorgsdagerMottakService
+import no.nav.helse.mottakDeleOmsorgsdager.v1.validate
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -20,6 +23,7 @@ private val logger: Logger = LoggerFactory.getLogger("no.nav.SoknadV1Api")
 
 internal fun Route.SoknadV1Api(
     soknadOverforeDagerMottakService: SoknadOverforeDagerMottakService,
+    meldingDeleOmsorgsdagerMottakService: MeldingDeleOmsorgsdagerMottakService,
     dittNavV1Service: DittNavV1Service
 ) {
 
@@ -45,6 +49,28 @@ internal fun Route.SoknadV1Api(
         call.respond(HttpStatusCode.Accepted, mapOf("id" to soknadId.id))
     }
 
+    post("v1/melding/dele-dager") {
+        val soknadId = call.getSoknadId()
+        val metadata = call.metadataDeleOmsorgsdager()
+        val soknad = call.meldingDeleOmsorgsdager()
+
+        meldingDeleOmsorgsdagerMottakService.leggTilProsessering(
+            soknadId = soknadId,
+            metadata = metadata,
+            soknad = soknad
+        )
+
+        sendBeskjedTilDittNav(
+            dittNavV1Service = dittNavV1Service,
+            dittNavTekst = "Melding om deling av omsorgsdager er mottatt.",
+            dittNavLink = "",
+            sokerFodselsNummer = soknad.sokerFodselsNummer,
+            soknadId = soknadId
+        )
+
+        call.respond(HttpStatusCode.Accepted, mapOf("id" to soknadId.id))
+    }
+
 }
 
 private suspend fun ApplicationCall.soknadOverforeDager() : SoknadOverforeDagerIncoming {
@@ -54,8 +80,21 @@ private suspend fun ApplicationCall.soknadOverforeDager() : SoknadOverforeDagerI
     return incoming
 }
 
+private suspend fun ApplicationCall.meldingDeleOmsorgsdager() : MeldingDeleOmsorgsdagerIncoming {
+    val json = receiveStream().use { String(it.readAllBytes(), Charsets.UTF_8) }
+    val incoming = MeldingDeleOmsorgsdagerIncoming(json)
+    incoming.validate()
+    return incoming
+}
+
 private fun ApplicationCall.metadata() = Metadata(
     version = 2,
+    correlationId = request.getCorrelationId(),
+    requestId = response.getRequestId()
+)
+
+private fun ApplicationCall.metadataDeleOmsorgsdager() = Metadata(
+    version = 1,
     correlationId = request.getCorrelationId(),
     requestId = response.getRequestId()
 )

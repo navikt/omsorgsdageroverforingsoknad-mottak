@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory
 import no.nav.brukernotifikasjon.schemas.Beskjed
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.helse.SoknadId
+import no.nav.helse.mottakDeleOmsorgsdager.v1.MeldingDeleOmsorgsdagerOutgoing
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -33,6 +34,10 @@ internal class SoknadOverforeDagerKafkaProducer(
         private val TOPIC_USE_DITT_NAV_MELDING = TopicUse(
             name = Topics.DITT_NAV_BESKJED,
             valueSerializer = DittNavBeskjedSerializer()
+        )
+        private val TOPIC_USE_DELE_OMSORGSDAGER = TopicUse(
+            name = Topics.MOTTATT_DELE_OMSORGSDAGER,
+            valueSerializer = MeldingDeleOmsorgsdagerOutgoingSerializer()
         )
         private val logger = LoggerFactory.getLogger(SoknadOverforeDagerKafkaProducer::class.java)
     }
@@ -76,6 +81,26 @@ internal class SoknadOverforeDagerKafkaProducer(
         logger.info("Søknad om overføring av omsorgsdager sendt til Topic '${TOPIC_USE.name}' med offset '${recordMetaData.offset()}' til partition '${recordMetaData.partition()}'")
     }
 
+    internal fun produceDeleOmsorgsdager(
+        melding: MeldingDeleOmsorgsdagerOutgoing,
+        metadata: Metadata
+    ) {
+        if (metadata.version != 1) throw IllegalStateException("Kan ikke legge melding om deling av omsorgsdager på versjon ${metadata.version} til prosessering.")
+
+        val recordMetaData = producer.send(
+            ProducerRecord(
+                TOPIC_USE_DELE_OMSORGSDAGER.name,
+                melding.soknadId.id,
+                TopicEntry(
+                    metadata = metadata,
+                    data = melding.jsonObject
+                )
+            )
+        ).get()
+
+        logger.info("Melding om deling av omsorgsdager sendt til Topic '${TOPIC_USE_DELE_OMSORGSDAGER.name}' med offset '${recordMetaData.offset()}' til partition '${recordMetaData.partition()}'")
+    }
+
     internal fun produceDittnavMelding(
         dto: ProduceBeskjedDto,
         søkersNorskeIdent: String,
@@ -104,6 +129,7 @@ internal class SoknadOverforeDagerKafkaProducer(
     override suspend fun check(): Result {
         return try {
             producer.partitionsFor(TOPIC_USE.name)
+            producer.partitionsFor(TOPIC_USE_DELE_OMSORGSDAGER.name)
             Healthy(NAME, "Tilkobling til Kafka OK!")
         } catch (cause: Throwable) {
             logger.error("Feil ved tilkobling til Kafka", cause)
@@ -113,6 +139,23 @@ internal class SoknadOverforeDagerKafkaProducer(
 }
 
 private class SoknadV1OutgoingSerialier : Serializer<TopicEntry<JSONObject>> {
+    override fun serialize(topic: String, data: TopicEntry<JSONObject>) : ByteArray {
+        val metadata = JSONObject()
+            .put("correlationId", data.metadata.correlationId)
+            .put("requestId", data.metadata.requestId)
+            .put("version", data.metadata.version)
+
+        return JSONObject()
+            .put("metadata", metadata)
+            .put("data", data.data)
+            .toString()
+            .toByteArray()
+    }
+    override fun configure(configs: MutableMap<String, *>?, isKey: Boolean) {}
+    override fun close() {}
+}
+
+private class MeldingDeleOmsorgsdagerOutgoingSerializer : Serializer<TopicEntry<JSONObject>> {
     override fun serialize(topic: String, data: TopicEntry<JSONObject>) : ByteArray {
         val metadata = JSONObject()
             .put("correlationId", data.metadata.correlationId)
@@ -150,7 +193,6 @@ private fun createBeskjedForIdent(ident: String, dto: ProduceBeskjedDto, grupper
         .setSynligFremTil(weekFromNowInMs)
     return build.build()
 }
-
 
 class ProduceBeskjedDto(val tekst: String, val link: String) {
     override fun toString(): String {

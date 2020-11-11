@@ -145,6 +145,26 @@ class OmsorgsdageroverforingsoknadMottakTest {
         )
     }
 
+    private fun gyldigMeldingDeleOmsorgsdagerBlirLagtTilProsessering(accessToken: String) {
+        val soknad = gyldigMeldingDeleOmsorgsdager(
+                fodselsnummerSoker = gyldigFodselsnummerA
+        )
+
+        val soknadId = requestAndAssert(
+                soknad = soknad,
+                expectedCode = HttpStatusCode.Accepted,
+                expectedResponse = null,
+                accessToken = accessToken,
+                path = "/v1/melding/dele-dager"
+        )
+
+        val sendtTilProsessering = hentMeldingDeleOmsorgsdagerSendtTilProsessering(soknadId)
+        verifiserSoknadOverforeDagerLagtTilProsessering(
+                incomingJsonString = soknad,
+                outgoingJsonObject = sendtTilProsessering
+        )
+    }
+
     @Test
     fun `Gyldig søknad for overføring av dager fra D-nummer blir lagt til prosessering`() {
         val soknad = gyldigSoknadOverforeDager(
@@ -163,6 +183,13 @@ class OmsorgsdageroverforingsoknadMottakTest {
             incomingJsonString = soknad,
             outgoingJsonObject = sendtTilProsessering
         )
+    }
+
+    @Test
+    fun `Gyldig melding for deling av omsorgsdager blir lagt til prosessering`(){
+        gyldigMeldingDeleOmsorgsdagerBlirLagtTilProsessering(Azure.V1_0.generateJwt(clientId = "omsorgsdageroverforingsoknad-api", audience = "omsorgsdageroverforingsoknad-mottak"))
+        gyldigMeldingDeleOmsorgsdagerBlirLagtTilProsessering(Azure.V2_0.generateJwt(clientId = "omsorgsdageroverforingsoknad-api", audience = "omsorgsdageroverforingsoknad-mottak"))
+
     }
 
     @Test
@@ -356,9 +383,38 @@ class OmsorgsdageroverforingsoknadMottakTest {
             }
         """.trimIndent()
 
+    private fun gyldigMeldingDeleOmsorgsdager(
+            fodselsnummerSoker : String
+    ) : String =
+            """
+        {
+            "søker": {
+                "fødselsnummer": "$fodselsnummerSoker",
+                "aktørId": "123456"
+            },
+            "hvilke_som_helst_andre_atributter": {
+                  "språk": "nb",
+                  "arbeidssituasjon": ["arbeidstaker"],
+                  "medlemskap": {
+                    "harBoddIUtlandetSiste12Mnd": false,
+                    "utenlandsoppholdSiste12Mnd": [],
+                    "skalBoIUtlandetNeste12Mnd": false,
+                    "utenlandsoppholdNeste12Mnd": []
+                  },
+                  "harForståttRettigheterOgPlikter": true,
+                  "harBekreftetOpplysninger": true,
+                }
+            }
+        """.trimIndent()
+
     private fun hentSoknadOverforeDagerSendtTilProsessering(soknadId: String?) : JSONObject {
         assertNotNull(soknadId)
         return kafkaTestConsumer.hentSoknad(soknadId, topic = Topics.MOTTATT_OVERFORE_DAGER).data
+    }
+
+    private fun hentMeldingDeleOmsorgsdagerSendtTilProsessering(soknadId: String?) : JSONObject {
+        assertNotNull(soknadId)
+        return kafkaTestConsumer.hentSoknad(soknadId, topic = Topics.MOTTATT_DELE_OMSORGSDAGER).data
     }
 
 }
